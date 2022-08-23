@@ -24,14 +24,14 @@
             }
             /******** Settings for each input******/
             function settings(timeInput) {
-                createPopup();
+                createPopup(timeInputs);
                 popupSettings();
                 timeInputClickEvent(timeInput);
                 timeInputChangeEvent(timeInput);
             }
-            function createPopup() {
+            function createPopup(timeInputs) {
                 var popupPresent = $('.nj-timepick').length > 0;
-                if (popupPresent) return; // return immediately if popup is present
+                if (popupPresent) $( ".nj-timepick" ).remove(); // return immediately if popup is present
                 var template = '\
                                     <div class="nj-timepick"> \
                                         <div class="nj-timepick__panel">\
@@ -41,12 +41,17 @@
                                         <div class="nj-timepick__boxes-column nj-timepick__minutes">\
                                                 '+ createBoxes("minutes", 0, 59, 0, "minute") + '\
                                         </div>\
+                                        <div class="nj-timepick__boxes-column nj-timepick__seconds">\
+                                                '+ createBoxes("seconds", 0, 59, 0, "second") + '\
+                                        </div>\
                                         <div class="nj-timepick__boxes-column nj-timepick__meridians">\
                                           <div val="AM" class="nj-timepick__box nj-timepick__meridian  nj-timepick__box--active">AM</div>\
                                           <div val="PM" class="nj-timepick__box nj-timepick__meridian">PM</div>\
                                         </div>\
                                 ';
-                $('body').append(template);
+                $(template).insertAfter(timeInputs);
+
+
                 /* Create hours and minute boxes */
                 function createBoxes(type, start, end, activateDigit, boxClass) {
                     var template = '<div class="nj-timepick__boxes nj-timepick__' + type + '-boxes">';
@@ -80,13 +85,16 @@
                         function setTime() {
                             var hourActive = njTimePick.find('.nj-timepick__hours .nj-timepick__box--active'),
                                 minuteActive = njTimePick.find('.nj-timepick__minutes .nj-timepick__box--active'),
+                                secondActive = njTimePick.find('.nj-timepick__seconds .nj-timepick__box--active'),
                                 meridianActive = njTimePick.find('.nj-timepick__meridians .nj-timepick__box--active'),
                                 hourValue = hourActive.text().trim(),
                                 minuteValue = minuteActive.text().trim(),
+                                secondValue = secondActive.text().trim(),
                                 meridianValue = meridianActive.text().trim(),
                                 timeIn24hr = to24hrFormat(hourValue, minuteValue, meridianValue);
                             $(".nj-timepick__hours-boxes").scrollTo(hourActive, 100);
                             $(".nj-timepick__minutes-boxes").scrollTo(minuteActive, 100);
+                            $(".nj-timepick__seconds-boxes").scrollTo(secondActive, 100);
                             $('.nj-timepick-input--active').val(timeIn24hr);
                         }
                     }
@@ -127,9 +135,11 @@
                 var timeObj = convert24hrToNormal(clickedTime),
                     hour = timeObj.hour,
                     minute = timeObj.minute,
+                    second = timeObj.second,
                     meridian = timeObj.meridian,
                     boxesToActivate = $('.nj-timepick__hour[val="' + hour + '"] , \
                                .nj-timepick__minute[val="' + minute + '"] , \
+                               .nj-timepick__second[val="' + second + '"] , \
                                .nj-timepick__meridian[val="' + meridian + '"]');
                 boxesToActivate.addClass('nj-timepick__box--active')
                     .siblings()
@@ -137,6 +147,7 @@
                 if (scroll === 'scroll-enable') {
                     $(".nj-timepick__hours-boxes").scrollTo(boxesToActivate[0]);
                     $(".nj-timepick__minutes-boxes").scrollTo(boxesToActivate[1]);
+                    $(".nj-timepick__seconds-boxes").scrollTo(boxesToActivate[2]);
                 }
             }
 
@@ -162,11 +173,11 @@
 
     };
     function timePicker() {
-        var timeInputs = $('input[type="time"');
+        var timeInputs = $('input[type="time"]');
         timeInputs.njTimepick();
     }
     $(window).on('load', function () {
-
-            timePicker();
+        timePicker();
     })
+    
 }(jQuery));
