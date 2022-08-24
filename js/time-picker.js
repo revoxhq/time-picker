@@ -24,14 +24,14 @@
             }
             /******** Settings for each input******/
             function settings(timeInput) {
-                createPopup(timeInputs);
+                createPopup(timeInput);
                 popupSettings();
                 timeInputClickEvent(timeInput);
                 timeInputChangeEvent(timeInput);
             }
-            function createPopup(timeInputs) {
+            function createPopup(timeInput) {
                 var popupPresent = $('.nj-timepick').length > 0;
-                if (popupPresent) $( ".nj-timepick" ).remove(); // return immediately if popup is present
+                if (popupPresent) return; // return immediately if popup is present
                 var template = '\
                                     <div class="nj-timepick"> \
                                         <div class="nj-timepick__panel">\
@@ -49,7 +49,10 @@
                                           <div val="PM" class="nj-timepick__box nj-timepick__meridian">PM</div>\
                                         </div>\
                                 ';
-                $(template).insertAfter(timeInputs);
+                // $(template).insertAfter('#timepicker');
+                $(template).insertAfter(timeInput);
+
+                // $('body').append(template);
 
 
                 /* Create hours and minute boxes */
@@ -173,8 +176,9 @@
 
     };
     function timePicker() {
-        var timeInputs = $('input[type="time"]');
+        var timeInputs = $("#timepicker");
         timeInputs.njTimepick();
+
     }
     $(window).on('load', function () {
         timePicker();
